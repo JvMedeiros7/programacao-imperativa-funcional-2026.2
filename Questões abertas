@@ -1,0 +1,274 @@
+# Questões Abertas
+
+## Questão 5
+
+Não, o código não compila (não "pega"). Faltam:
+
+- `#include <stdio.h>`
+- `return 0;` no final do `main()`
+
+## Questão 6
+
+Analisando o programa linha a linha:
+
+```c
+1  main()
+2  {
+3  int a=1; b=2; c=3:
+4  printf("0s números são: %d%d%d\n, a, b, c, d);
+5  system("pause");
+6  }
+```
+
+### Erros de sintaxe (violam a gramática do C)
+
+1. **Linha 3 — `b=2;` e `c=3` sem tipo declarado**: apenas `a` foi declarado como `int`. Em C não existe declaração implícita de variável (diferente de funções no C antigo); `b` e `c` estão sendo usadas sem nunca terem sido declaradas. O correto seria `int a=1, b=2, c=3;`.
+
+2. **Linha 3 — `c=3:`**: uso de dois-pontos (`:`) no lugar de ponto e vírgula (`;`) para terminar o comando. O compilador provavelmente vai interpretar isso como um rótulo (*label*), o que é sintaticamente inválido nesse contexto.
+
+3. **Linha 4 — string não fechada**: `"0s números são: %d%d%d\n` abre aspas mas nunca fecha antes da vírgula. Falta o `"` depois do `\n`. Isso gera erro de *unterminated string literal* (literal de string não terminado), e tudo que vem depois (`, a, b, c, d)`) seria interpretado incorretamente pelo compilador.
+
+4. **Linha 4 — uso da variável `d`**: `d` é passada para o `printf`, mas nunca foi declarada em lugar nenhum — identificador não declarado (erro de compilação).
+
+5. **Faltam diretivas de `#include`**: `printf` exige `#include <stdio.h>` e `system` exige `#include <stdlib.h>`. Sem elas, em compiladores C99/C11/C17 (que exigem protótipo) o programa não compila (chamada de função implícita/não declarada).
+
+6. **Linha 1 — `main()` sem tipo de retorno**: em C89 isso era tolerado (`int` implícito), mas nos padrões C99 em diante a omissão do tipo de retorno é um erro de sintaxe. O correto é `int main()` (ou `int main(void)`).
+
+### Erros de lógica
+
+1. **Formato incompatível com os argumentos**: o `printf` tem apenas três especificadores `%d`, mas quatro variáveis são passadas (`a, b, c, d`). Mesmo corrigindo a sintaxe, sobraria um argumento (`d`) sem especificador correspondente, gerando saída incorreta/indefinida.
+
+2. **Erro de digitação no texto**: `"0s números são..."` — o caractere é o número zero (`0`) em vez da letra `O`, o que produziria uma saída visualmente errada ("0s números são" em vez de "Os números são").
+
+3. **Ausência de `return 0;`** ao final de `main`: não é obrigatório (o C99 assume retorno 0 se a função cai no fim), mas é uma prática recomendada e sua ausência é normalmente considerada falha de estilo/lógica em código didático.
+
+### Versão corrigida
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int main()
+{
+    int a = 1, b = 2, c = 3;
+    printf("Os números são: %d %d %d\n", a, b, c);
+    system("pause");
+    return 0;
+}
+```
+## Questão 7
+
+Questão 07. Descreva a saída exata (incluindo quebras de linha e tabulações) que será impressa no console por cada uma das seguintes instruções independentes do `printf()`:
+
+**a)** `printf("\n\tBom dia! Shirley.");`
+
+```
+<quebra de linha>
+	Bom dia! Shirley.
+```
+
+**b)** `printf("Você já tomou café? \n");`
+
+```
+Você já tomou café?
+```
+
+**c)** `printf("\n\nA solução não existe!\nNão insista.");`
+
+```
+<quebra de linha>
+<quebra de linha>
+A solução não existe!
+Não insista.
+```
+
+**d)** `printf("Duas\tlinhas\tde\tsaída\nou\tuma?");`
+
+```
+Duas	linhas	de	saída
+ou	uma?
+```
+
+**e)** `printf("%s\n%s\n%s\n", "um", "dois", "três");`
+
+```
+um
+dois
+três
+```
+
+## Questão 10
+
+Questão 10. A Linguagem C é conhecida por ser sensível a caixa alta e baixa (case sensitive). Explique o significado prático desse conceito. Identificadores como `peso`, `Peso` e `PESO` representam a mesma variável na memória? Assinale a alternativa correta e complemente com sua justificativa:
+
+a) Depende exclusivamente da implementação do compilador utilizado no sistema.
+b) Verdadeiro (a linguagem C diferencia rigorosamente letras maiúsculas de minúsculas).
+c) Falso (letras maiúsculas e minúsculas são interpretadas como equivalentes pelo compilador).
+
+**Alternativa correta: b)**
+
+C é uma linguagem *case sensitive*: o compilador trata letras maiúsculas e minúsculas como caracteres diferentes ao formar identificadores (nomes de variáveis, funções, palavras-chave, etc.). Isso não depende do compilador nem da plataforma, é uma regra definida pela gramática da linguagem (padrão ISO C), válida em qualquer implementação em conformidade.
+
+Na prática, isso significa que `peso`, `Peso` e `PESO` são três identificadores **distintos**, e portanto podem representar **três variáveis diferentes**, ocupando endereços de memória diferentes, não é a mesma variável. Por exemplo:
+
+```c
+#include <stdio.h>
+
+int main(void)
+{
+    int peso = 70;
+    int Peso = 80;
+    int PESO = 90;
+
+    printf("%d %d %d\n", peso, Peso, PESO); // 70 80 90
+
+    return 0;
+}
+```
+
+Esse comportamento também vale para palavras-chave: `int` é a palavra reservada da linguagem, mas `Int` ou `INT` não são reconhecidas como tal e podem ser usadas livremente como nomes de variável (embora não seja uma boa prática). Por isso, ao programar em C, é preciso manter consistência exata de maiúsculas/minúsculas ao declarar e usar identificadores — um erro comum de iniciantes é declarar `Soma` e depois tentar usar `soma`, o que gera erro de identificador não declarado.
+
+
+## Questão 11
+
+Questão 11. Para cada um dos valores constantes descritos na tabela abaixo, indique a classificação
+correta (por exemplo: constante inteira decimal, constante de ponto flutuante, constante de caractere,
+constante string ou sequência de escape) e o tipo de dado base correspondente em C (como char, int,
+float, double):
+
+| Constante | Classificação (Tipo de Constante) | Tipo Base em C |
+|---|---|---|
+| `\r` | Sequência de escape (constante de caractere) | `char` |
+| `2130` | Constante inteira decimal | `int` |
+| `-123` | Constante inteira decimal | `int` |
+| `33.28` | Constante de ponto flutuante | `double` |
+| `0XFA` | Constante inteira hexadecimal | `int` |
+| `0101` | Constante inteira octal | `int` |
+| `2.0e30` | Constante de ponto flutuante (notação científica) | `double` |
+| `\xDC` | Sequência de escape hexadecimal | `char` |
+| `'\"'` | Constante de caractere (sequência de escape) | `char` |
+| `'\\'` | Constante de caractere (sequência de escape) | `char` |
+| `'F'` | Constante de caractere | `char` |
+| `0` | Constante inteira decimal | `int` |
+| `'\0'` | Constante de caractere (sequência de escape — caractere nulo) | `char` |
+| `"F"` | Constante string (sequência de caracteres) | `char` (array de `char`) |
+| `-4567.89` | Constante de ponto flutuante | `double` |
+
+### Observações importantes
+
+- **Prefixo `0X`/`0x`** indica base **hexadecimal**; um número que começa com `0` seguido de outros dígitos (como `0101`) é interpretado como **octal**.
+- **Constantes de ponto flutuante** em C são, por padrão, do tipo `double` (não `float`), a menos que tenham o sufixo `f`/`F` (ex.: `33.28f` seria `float`).
+- **`2.0e30`** usa notação científica (mantissa `e` expoente), mas continua sendo uma constante de ponto flutuante, tipo `double`.
+- **Aspas simples `' '`** delimitam uma **constante de caractere** (tipo `char`), mesmo quando o conteúdo é uma sequência de escape como `'\"'`, `'\\'` ou `'\0'`.
+- **Aspas duplas `" "`** delimitam uma **constante string**, que em C é tratada como um vetor de caracteres terminado em `'\0'` — por isso o tipo base é `char`, mas o literal em si tem tipo `char[]` (ou decai para `char*`).
+- **`\r`** e **`\xDC`** aparecem sem aspas na tabela — são sequências de escape que, quando usadas em código real, apareceriam dentro de aspas simples (como caractere) ou duplas (dentro de uma string); seu tipo base isolado é `char`.
+
+## Questão 12
+
+Questão 12. A declaração de variáveis define o tipo e o identificador de cada espaço reservado na
+memória. Analise cada uma das declarações na tabela a seguir, preencha o seu status (Correto ou
+Incorreto) e, caso seja incorreto, justifique detalhadamente o erro sintático:
+
+| Instrução | Status (C/I) | Justificativa Teórica |
+|---|---|---|
+| a) `int a;` | Correto | Declaração simples e válida de uma variável inteira. |
+| b) `float b;` | Correto | Declaração simples e válida de uma variável de ponto flutuante. |
+| c) `double float c;` | Incorreto | `double` e `float` são dois *type specifiers* completos e mutuamente exclusivos, não um tipo base e um modificador. Não é possível combinar dois tipos de dados diferentes em uma única declaração; o compilador não sabe se `c` é `double` ou `float`. |
+| d) `unsigned char d;` | Correto | `unsigned` é um modificador válido para `char`, criando uma variável de 1 byte que armazena apenas valores positivos (0 a 255), sem sinal. |
+| e) `unsigned e;` | Correto | Quando `unsigned` é usado sozinho (sem tipo base explícito), o compilador assume implicitamente `unsigned int`. |
+| f) `long float f;` | Incorreto | O modificador `long` é aplicável apenas a `int` e `double` (`long int`, `long double`), não a `float`. Não existe o tipo `long float` no padrão ANSI C moderno (era um sinônimo obsoleto de `double` em versões muito antigas da linguagem, hoje descontinuado). |
+| g) `long g;` | Correto | Assim como `unsigned`, quando `long` é usado isoladamente, o compilador assume `long int` implicitamente. |
+| h) `long double h;` | Correto | `long double` é um tipo válido em C, representando um ponto flutuante de precisão estendida (maior que `double`). |
+
+### Observações importantes
+
+- Em C, cada tipo básico (`int`, `float`, `double`, `char`) aceita apenas um conjunto específico de modificadores (`short`, `long`, `signed`, `unsigned`). Misturar modificadores incompatíveis com um tipo gera erro de compilação.
+- **Erro em (c)**: dois tipos completos e incompatíveis são justapostos (`double` + `float`).
+- **Erro em (f)**: um modificador (`long`) é aplicado a um tipo (`float`) que não o aceita na gramática da linguagem C.
+- **Corretas:** a, b, d, e, g, h — **Incorretas:** c, f
+
+
+## Questão 13
+
+Questão 13. No desenvolvimento de programas em C, o que são conceitualmente os arquivos de
+inclusão (headers com extensão .h)?
+
+a) São bibliotecas pré-compiladas em formato binário contendo funções estruturadas.
+b) São utilitários do sistema que realizam a linkedição dos programas.
+c) São arquivos de texto ASCII padrão contendo protótipos de funções, definições de constantes, macros e tipos.
+d) São módulos de controle executados diretamente pelo microprocessador em tempo de execução.
+
+**Alternativa correta: c)**
+
+Um arquivo *header* (`.h`) é, conceitualmente, um arquivo de texto puro (ASCII), assim como um arquivo `.c` — ele não contém código binário nem código executável. Seu conteúdo típico é:
+
+- **Protótipos de funções** (declarações como `int printf(const char *formato, ...);`), que informam ao compilador a assinatura das funções para que ele possa checar chamadas antes da fase de *linkedição*.
+- **Definições de constantes e macros** (via `#define`), como `#define PI 3.14159`.
+- **Definições de tipos** (`typedef`, `struct`, `enum`, `union`), que criam novos nomes de tipo utilizáveis em vários arquivos `.c`.
+- **Diretivas de compilação condicional** (`#ifndef`/`#define`/`#endif`), usadas como guarda de inclusão para evitar que o mesmo header seja processado mais de uma vez na mesma unidade de compilação.
+
+A diretiva `#include` funciona literalmente como uma cópia textual: o pré-processador substitui a linha `#include "arquivo.h"` pelo conteúdo integral do arquivo antes mesmo de o compilador propriamente dito atuar.
+
+### Por que as demais alternativas estão erradas
+
+- **a) Incorreta** — quem contém código pré-compilado em binário são as bibliotecas de *link* (arquivos `.lib`, `.a`, `.dll`, `.so`), não os headers. O header apenas *declara* o que essas bibliotecas implementam.
+- **b) Incorreta** — quem realiza a linkedição é o *linker* (montador de ligação), um programa separado do compilador; o header não executa nenhuma ação, é apenas um arquivo de texto consultado durante a compilação.
+- **d) Incorreta** — nenhum arquivo `.h` é executado pelo processador; ele é usado apenas durante a etapa de pré-processamento/compilação, e nem sobrevive ao processo de *build* (não aparece no executável final).
+
+
+## Questão 15
+
+Questão 15. A diretiva `#include`, amplamente utilizada no topo dos arquivos C, é classificada como:
+
+a) Uma instrução C nativa (compilada diretamente em linguagem de máquina).
+b) Uma instrução específica de linguagens de programação orientadas a objetos.
+c) Uma diretiva especial para o pré-processador C, executada antes da compilação.
+d) Um objeto de classe de armazenamento dinâmico na memória heap.
+
+**Alternativa correta: c)**
+
+`#include` não é uma instrução da linguagem C propriamente dita — ela nunca é traduzida em código de máquina e não gera nenhuma operação em tempo de execução. É uma **diretiva de pré-processador**, reconhecida pelo caractere `#` no início da linha, processada na fase de pré-processamento, que ocorre **antes** da compilação em si. Sua função é substituir a linha da diretiva pelo conteúdo integral do arquivo indicado (um header, por exemplo), gerando um novo texto-fonte "expandido" que só então é entregue ao compilador.
+
+### Por que as demais alternativas estão erradas
+
+- **a) Incorreta** — instruções nativas de C (como `if`, `for`, `return`) são compiladas em código de máquina; `#include` desaparece antes mesmo dessa etapa, não gerando instrução alguma no executável.
+- **b) Incorreta** — C é uma linguagem procedural, não orientada a objetos, e `#include` não tem relação com conceitos de POO (como `import` em Java, por exemplo, que tem semântica diferente).
+- **d) Incorreta** — `#include` não é um objeto, não ocupa memória heap e não existe em tempo de execução; é puramente uma instrução textual da fase de pré-processamento.
+
+## Questão 16
+
+Questão 16. As diretivas de pré-processador em C (todas iniciadas com o caractere `#`) são lidas e interpretadas pelo:
+
+a) Linkeditor do sistema no momento de montagem do arquivo executável final.
+b) Microprocessador diretamente em tempo de execução.
+c) Pré-processador (fase do compilador que altera o programa-fonte antes da compilação propriamente dita).
+d) Depurador integrado da IDE durante os testes de execução.
+
+**Alternativa correta: c)**
+
+Toda diretiva iniciada por `#` (`#include`, `#define`, `#ifdef`, `#ifndef`, `#endif`, `#pragma`, etc.) é interpretada pelo **pré-processador**, um componente que atua como primeira fase do processo de compilação. Ele realiza substituições textuais (expansão de macros, inclusão de arquivos, compilação condicional) e produz um arquivo-fonte "puro" em C, sem diretivas, que é então repassado ao compilador propriamente dito para análise léxica, sintática e semântica.
+
+### Por que as demais alternativas estão erradas
+
+- **a) Incorreta** — o linkeditor (*linker*) atua depois da compilação, unindo arquivos-objeto (`.o`/`.obj`) e bibliotecas para formar o executável; ele não interpreta diretivas de pré-processador, que já foram resolvidas muito antes dessa etapa.
+- **b) Incorreta** — o microprocessador executa apenas instruções de máquina; diretivas de pré-processador nem chegam a existir no binário final, não fazem sentido em tempo de execução.
+- **d) Incorreta** — o depurador (*debugger*) atua sobre o código já compilado (ou sobre símbolos de depuração gerados na compilação), não sobre diretivas de pré-processamento, que são resolvidas antes de o programa sequer ser compilado.
+
+## Questão 17
+
+Questão 17. Dentre as instruções de escrita abaixo, quais estão sintaticamente corretas? O que essas variações demonstram sobre a flexibilidade de espaçamento e formatação do compilador C?
+
+a) `printf ( "Primeiro programa" );`
+b) `printf( "Primeiro programa" );`
+c) `printf("Primeiro programa");`
+d) `printf "Primeiro programa" ;`
+
+**Corretas: a), b) e c)** — **Incorreta: d)**
+
+As alternativas (a), (b) e (c) são sintaticamente equivalentes e todas válidas. Isso demonstra que o compilador C é, em geral, **indiferente a espaços em branco** (*whitespace-insensitive*) entre tokens (identificadores, parênteses, pontuação): espaços, tabulações e quebras de linha entre `printf`, `(`, o argumento e `)` não alteram o significado do comando, servindo apenas para legibilidade do código-fonte. O compilador identifica os *tokens* da chamada de função (`printf`, `(`, string literal, `)`, `;`) independentemente da quantidade de espaços em branco entre eles.
+
+- **d) Incorreta** — falta o par de parênteses `( )` que delimita a lista de argumentos da chamada de função. `printf "Primeiro programa" ;` não é uma chamada de função válida em C; toda chamada de função exige `nome_da_funcao(argumentos);`. Sem os parênteses, o compilador não reconhece isso como uma invocação de `printf`, gerando erro de sintaxe.
+
+### Observação
+
+Apesar dessa flexibilidade de espaçamento entre tokens, o C **é sensível** a espaços dentro de *identificadores* (não se pode quebrar o nome de uma variável ou função no meio) e a quebras de linha dentro de *strings literais* sem escape (`"texto` não pode continuar na linha seguinte sem `\`). A flexibilidade se aplica à separação entre tokens, não à formação deles.
