@@ -60,6 +60,7 @@ int main(){
     int resultado = a + b * c; // A multiplicação é realizada primeiro, então o resultado é 10 + (5 * 2) = 20
     printf("Resultado da expressão a + b * c: %d\n", resultado); // Resultado da expressão a + b * c: 20
 
+
     // Para alterar a ordem de avaliação, podemos usar parênteses:
     resultado = (a + b) * c; // Agora a adição é realizada primeiro, então o resultado é (10 + 5) * 2 = 30
     printf("Resultado da expressão (a + b) * c: %d\n", resultado); // Resultado da expressão (a + b) * c: 30
@@ -168,9 +169,9 @@ int main(){
 
     // Exemplos de incremento:
 
-    x = x + 1; // Incrementa x em 1, agora x é 6
-    x++;       // Incrementa x em 1, agora x é 7
-    --x;       // Decrementa x em 1, agora x é 6
+    x = x + 1; // Incrementa x em 1, agora x é 3
+    x++;       // Incrementa x em 1, agora x é 4
+    --x;       // Decrementa x em 1, agora x é 3
 
     printf("Valor final de x: %d\n", x);
 
