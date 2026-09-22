@@ -25,9 +25,14 @@ int main(){
     while(ch == 's' || ch == 'S'){
         system("cls"); // Limpa a tela antes de cada nova entrada de notas
         float media = 0.0; // Resetando a média para cada nova entrada de notas
-        printf("Digite a quantidade de notas: ");
-        scanf("%d", &qtdNotas);
+        
+        do{
+            printf("Digite a quantidade de notas: ");
+            scanf("%d", &qtdNotas);
+            printf("Quantidade de notas inválida. Por favor, digite um número entre 1 e 100.\n");
+        } while(qtdNotas < 1 || qtdNotas > 100); // Valida a entrada do usuário para garantir que a quantidade de notas seja maior que zero
 
+        
         for(int i = 0; i < qtdNotas; i++){
             printf("Digite a nota %d: ", i + 1);
             scanf("%f", &nota);
