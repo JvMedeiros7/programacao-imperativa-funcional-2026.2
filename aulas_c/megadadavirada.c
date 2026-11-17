@@ -12,27 +12,28 @@ int main(void) {
         SetConsoleOutputCP(CP_UTF8);
     #endif
     
-    char ch;
+    int jogo[6];
 
-    do{
-        system("cls"); // Limpa a tela
+    printf(".:: Mega da Virada ::.\n\n");
 
-
-        int jogo[6];
-        printf(".:: Programa de Sorteio da Mega Sena ::.\n\n");
-
-        for (int i = 0; i < 6; i++) {
-            jogo[i] = rand() % 60 + 1; // Gera um número aleatório entre 1 e 60
-        }
-
-        for (int i = 0; i < 6; i++) {
-            printf("%d ", jogo[i]);
-        }
+    for (int i = 0; i < 6; i++){
+        int numero = rand () % 60 + 1; // Gera um número aleatório entre 1 e 60
+            if (i > 0) {
+                // Verifica se o número já foi sorteado
+                for (int j = 0; j < i; j++) {
+                    if (jogo[j] == numero) {
+                        // Se o número já foi sorteado, gera um novo número
+                        do{
+                            numero = rand () % 60 + 1;
+                        } while (numero == jogo[j]);
+                        j = -1; // Reinicia a verificação
+                    }
+                }
+            }
+            jogo[i] = numero;
+            printf("%d ", numero);  
     }
-    do{
-        printf("\n\nDeseja gerar outro jogo? (s/n): ");
-        ch = getch(); // Lê um caractere sem exibir na tela
-    }while (ch != 's' && ch != 'n');
+
 
     system("pause");
     
